@@ -1,25 +1,22 @@
-// singleton class
+class ProjectInput {
+  private templateEl: HTMLTemplateElement;
+  private hostEl: HTMLDivElement;
+  private templateContent: HTMLFormElement;
 
-class Singleton {
-    private static instance: Singleton;
+  constructor() {
+    this.templateEl = document.getElementById('project-input') as HTMLTemplateElement;
+    this.hostEl = document.getElementById('app') as HTMLDivElement;
 
-    private constructor(public name: string) {
+    const importedNode = document.importNode(this.templateEl.content, true);
 
-    }
+    this.templateContent = importedNode.firstElementChild as HTMLFormElement;
 
-    static getInstance() {
-        if (Singleton.instance) return this.instance;
+    this.attach();
+  }
 
-        this.instance = new Singleton('my special singletone');
-        return this.instance;
-    }
+  private attach() {
+    this.hostEl.insertAdjacentElement("afterbegin", this.templateContent);
+  }
 }
 
-const SingletoneOne = Singleton.getInstance();
-const SingletoneTwo = Singleton.getInstance();
-// const SingletoneThree = new Singleton;
-
-
-
-console.log(SingletoneOne);
-console.log(SingletoneTwo);
+new ProjectInput();
