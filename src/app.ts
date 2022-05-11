@@ -1,3 +1,20 @@
+// autobind decorator: binds a method to current class
+function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
+  const originalMethod = descriptor.value;
+
+  const adjDescriptor: PropertyDescriptor = {
+    configurable: true,
+    get() {
+      const adjMethod = originalMethod.bind(this);
+
+      return adjMethod;
+    }
+  }
+
+  return adjDescriptor;
+}
+// end of autobind decorator
+
 class ProjectInput {
   private templateEl: HTMLTemplateElement;
   private hostEl: HTMLDivElement;
@@ -24,6 +41,7 @@ class ProjectInput {
     this.attach();
   }
 
+  @autobind
   private handleSubmit(event: Event) {
     event.preventDefault();
 
@@ -34,7 +52,7 @@ class ProjectInput {
   }
 
   private configure() {
-    this.formEl.addEventListener('submit', this.handleSubmit.bind(this));
+    this.formEl.addEventListener('submit', this.handleSubmit);
   }
 
   private attach() {
