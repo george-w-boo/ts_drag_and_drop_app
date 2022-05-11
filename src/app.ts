@@ -56,6 +56,41 @@ function validate(objToValidate: Validatable): boolean {
 }
 // end of validation
 
+// Project List section
+class ProjectList {
+  private templateEl: HTMLTemplateElement;
+  private hostEl: HTMLDivElement;
+  private sectionEl: HTMLElement;
+
+  constructor(private type: "active" | "finished") {
+    this.templateEl = document.getElementById(
+      "project-list"
+    ) as HTMLTemplateElement;
+
+    this.hostEl = document.getElementById("app") as HTMLDivElement;
+
+    const importedNode = document.importNode(this.templateEl.content, true);
+
+    this.sectionEl = importedNode.firstElementChild as HTMLElement;
+    this.sectionEl.id = `${this.type}-projects`;
+
+    this.attach();
+    this.populate();
+  }
+
+  private populate() {
+    const listId = `${this.type}-projects-list`;
+    this.sectionEl.querySelector("ul")!.id = listId;
+    this.sectionEl.querySelector("h2")!.textContent =
+      `${this.type} projects`.toUpperCase();
+  }
+
+  private attach() {
+    this.hostEl.insertAdjacentElement("beforeend", this.sectionEl);
+  }
+}
+
+// User input form
 class ProjectInput {
   private templateEl: HTMLTemplateElement;
   private hostEl: HTMLDivElement;
@@ -77,32 +112,19 @@ class ProjectInput {
     this.formEl = importedNode.firstElementChild as HTMLFormElement;
     this.formEl.id = "user-input";
 
-<<<<<<< HEAD
-    this.inputTitleEl = this.formEl.querySelector('#title')! as HTMLInputElement;
-=======
     this.inputTitleEl = this.formEl.querySelector(
       "#title"
     )! as HTMLInputElement;
->>>>>>> dev
 
     this.inputDescriptionEl = this.formEl.querySelector(
       "#description"
     ) as HTMLTextAreaElement;
-<<<<<<< HEAD
-    this.inputPeopleEl = this.formEl.querySelector("#people") as HTMLInputElement;
-
-    this.attach();
-    this.configure();
-
-    console.log('this.inputTitleEl', document.getElementById('title'));
-=======
     this.inputPeopleEl = this.formEl.querySelector(
       "#people"
     ) as HTMLInputElement;
 
     this.attach();
     this.configure();
->>>>>>> dev
   }
 
   private clearInputs() {
@@ -112,17 +134,6 @@ class ProjectInput {
   }
 
   private gatherUserInput(): [string, string, number] | void {
-<<<<<<< HEAD
-    console.log('ssdfs');
-    const title = this.inputTitleEl.value;
-    const description = this.inputDescriptionEl.value;
-    const peopleAmount = this.inputPeopleEl.value;
-
-    if (
-      title.trim().length === 0 ||
-      description.trim().length === 0 ||
-      peopleAmount.trim().length === 0
-=======
     const title = this.inputTitleEl.value.trim();
     const description = this.inputDescriptionEl.value.trim();
     const peopleAmount = +this.inputPeopleEl.value.trim();
@@ -148,7 +159,6 @@ class ProjectInput {
       !validate(titleValidationConfig) ||
       !validate(descriptionValidationConfig) ||
       !validate(peopleValidationConfig)
->>>>>>> dev
     ) {
       alert(
         "An invalit input filed. Please, make sure all the fields are not empty"
@@ -162,19 +172,11 @@ class ProjectInput {
   @autobind
   private handleSubmit(event: Event) {
     event.preventDefault();
-    console.log('submitted');
 
     const userInput = this.gatherUserInput();
 
     console.log("userInput", userInput);
 
-<<<<<<< HEAD
-=======
-    const userInput = this.gatherUserInput();
-
-    console.log("userInput", userInput);
-
->>>>>>> dev
     this.clearInputs();
   }
 
@@ -187,4 +189,6 @@ class ProjectInput {
   }
 }
 
-new ProjectInput();
+const prjInput = new ProjectInput();
+const activeProjectsList = new ProjectList("active");
+const finishedProjectsList = new ProjectList("finished");
