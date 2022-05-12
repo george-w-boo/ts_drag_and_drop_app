@@ -1,3 +1,44 @@
+// app state
+class ProjectState {
+  private static instance: ProjectState;
+  private projects: any[] = [];
+  private listeners: any[] = [];
+
+  private constructor() {
+    this.projects = [];
+  }
+
+  static getInstance() {
+    if (this.instance) {
+      return this.instance;
+    }
+
+    this.instance = new ProjectState();
+    return this.instance;
+  }
+
+  addProject(title: string, description: string, people: number) {
+    const newProject = {
+      id: Math.random().toString(),
+      title,
+      description,
+      people,
+    };
+
+    this.projects.push(newProject);
+
+    for (const listenerFn of this.listeners) {
+      listenerFn(this.projects.slice());
+    }
+  }
+
+  addListener(listnerFn: Function) {
+    this.listeners.push(listnerFn);
+  }
+}
+
+const prjState = ProjectState.getInstance();
+
 // autobind decorator: binds a method to current class
 function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
@@ -61,6 +102,7 @@ class ProjectList {
   private templateEl: HTMLTemplateElement;
   private hostEl: HTMLDivElement;
   private sectionEl: HTMLElement;
+  private assignedProjects: any[];
 
   constructor(private type: "active" | "finished") {
     this.templateEl = document.getElementById(
@@ -74,8 +116,26 @@ class ProjectList {
     this.sectionEl = importedNode.firstElementChild as HTMLElement;
     this.sectionEl.id = `${this.type}-projects`;
 
+    this.assignedProjects = [];
+
+    prjState.addListener((projects: any[]) => {
+      this.assignedProjects = projects;
+      this.renderProjects();
+    });
+
     this.attach();
     this.populate();
+  }
+
+  private renderProjects() {
+    const list = document.getElementById(
+      `${this.type}-projects-list`
+    )! as HTMLUListElement;
+    for (const assignedProject of this.assignedProjects) {
+      const listItem = document.createElement('li');
+      listItem.textContent = assignedProject.title;
+      list.appendChild(listItem);
+    }
   }
 
   private populate() {
@@ -174,10 +234,13 @@ class ProjectInput {
     event.preventDefault();
 
     const userInput = this.gatherUserInput();
-
     console.log("userInput", userInput);
 
-    this.clearInputs();
+    if (Array.isArray(userInput)) {
+      prjState.addProject(...userInput);
+
+      this.clearInputs();
+    }
   }
 
   private configure() {
