@@ -1,8 +1,26 @@
+// project item
+enum ProjectStatus {
+  Active,
+  Finished,
+}
+
+class Project {
+  constructor(
+    public id: string,
+    public title: string,
+    public description: string,
+    public people: number,
+    public status: ProjectStatus
+  ) {}
+}
+
 // app state
+type Listener = (items: Project[]) => void;
+
 class ProjectState {
   private static instance: ProjectState;
-  private projects: any[] = [];
-  private listeners: any[] = [];
+  private projects: Project[] = [];
+  private listeners: Listener[] = [];
 
   private constructor() {
     this.projects = [];
@@ -18,11 +36,12 @@ class ProjectState {
   }
 
   addProject(title: string, description: string, people: number) {
-    const newProject = {
+    const newProject: Project = {
       id: Math.random().toString(),
       title,
       description,
       people,
+      status: ProjectStatus.Active,
     };
 
     this.projects.push(newProject);
@@ -32,7 +51,7 @@ class ProjectState {
     }
   }
 
-  addListener(listnerFn: Function) {
+  addListener(listnerFn: Listener) {
     this.listeners.push(listnerFn);
   }
 }
@@ -102,7 +121,7 @@ class ProjectList {
   private templateEl: HTMLTemplateElement;
   private hostEl: HTMLDivElement;
   private sectionEl: HTMLElement;
-  private assignedProjects: any[];
+  private assignedProjects: Project[];
 
   constructor(private type: "active" | "finished") {
     this.templateEl = document.getElementById(
@@ -118,7 +137,7 @@ class ProjectList {
 
     this.assignedProjects = [];
 
-    prjState.addListener((projects: any[]) => {
+    prjState.addListener((projects: Project[]) => {
       this.assignedProjects = projects;
       this.renderProjects();
     });
@@ -132,7 +151,7 @@ class ProjectList {
       `${this.type}-projects-list`
     )! as HTMLUListElement;
     for (const assignedProject of this.assignedProjects) {
-      const listItem = document.createElement('li');
+      const listItem = document.createElement("li");
       listItem.textContent = assignedProject.title;
       list.appendChild(listItem);
     }
