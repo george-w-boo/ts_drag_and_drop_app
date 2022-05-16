@@ -1,5 +1,5 @@
 {
-  "homepage": "https://george-w-boo.github.io",
+  "homepage": "https://george-w-boo.github.io/ts_drop-down_app/",
   "name": "understanding-typescript",
   "version": "1.0.0",
   "description": "Understanding TypeScript Course Setup",
@@ -7,7 +7,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack serve",
-    "build": "webpack --config webpack.config.prod.js"
+    "build": "webpack --config webpack.config.prod.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "keywords": [
     "typescript",
@@ -23,5 +25,8 @@
     "webpack": "^5.72.1",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.9.0"
+  },
+  "dependencies": {
+    "gh-pages": "^4.0.0"
   }
 }
